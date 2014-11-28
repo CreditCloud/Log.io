@@ -1,23 +1,32 @@
 {spawn, exec} = require 'child_process'
 fs = require 'fs'
+pathFn = require 'path'
 
 ENV = '/usr/bin/env'
-BROWSERIFY = "#{ ENV } browserify"
-COFFEE = "#{ ENV } coffee"
+BIN = "#{__dirname}/node_modules/.bin/"
+# browserify less coffee 指定版本
+BROWSERIFY = "#{ BIN }browserify"
+COFFEE = "#{ BIN }coffee"
 MOCHA = "#{ ENV } mocha"
-LESS = "#{ ENV } lessc"
+LESS = "#{ BIN }lessc"
 NODE = "#{ ENV } node"
 
 TEMPLATE_SRC = "#{ __dirname }/templates"
 TEMPLATE_OUTPUT = "#{ __dirname }/src/templates.coffee"
 
 task 'build', "Builds Log.io package", ->
+  invoke "copy"
   invoke 'templates'
   invoke 'compile'
   invoke 'less'
   invoke 'browserify'
   # Ensure browserify has completed
   setTimeout (-> invoke 'func_test'), 2000
+
+task 'copy',"copy /src/*.js to /lib/*.js",->
+  fs.readdirSync("src").forEach (f)->
+    if pathFn.extname(f) == '.js'
+      copyFile("src/#{f}","lib/#{f}")
 
 task 'compile', "Compiles CoffeeScript src/*.coffee to lib/*.js", ->
   console.log "Compiling src/*.coffee to lib/*.js"
@@ -32,7 +41,7 @@ task 'browserify', "Compiles client.coffee to browser-friendly JS", ->
 
 task 'less', "Compiles less templates to CSS", ->
   console.log "Compiling src/less/* to lib/log.io.css"
-  exec "#{LESS} #{__dirname}/src/less/log.io.less -compress -o #{__dirname}/lib/log.io.css", (err, stdout, stderr) ->
+  exec "lessc #{__dirname}/src/less/log.io.less -compress -o #{__dirname}/lib/log.io.css", (err, stdout, stderr) ->
     throw err if err
     console.log stdout + stderr if stdout + stderr
 

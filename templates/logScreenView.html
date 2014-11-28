@@ -2,6 +2,24 @@
 <% if (logScreens.length > 1) { %><a href="#" class='close'>close</a><% } %>
   <a href="#" class='clear'>clear</a>
   <a href="#" class='filter'>filter <input type='text'/></a>
+  
+  <br />
+
+  <div class="level-wrapper">
+    <span> select level : </span>
+    <select id="level_filter">
+      <!-- specify levels : { error : 5 } level = error levels[error] = 5 -->
+      <!-- _.forOwn 不可用 -->
+      <% for(var level in levels){ %>
+        <% if(levels.hasOwnProperty(level)){ %>
+          <option value="<%= levels[level] %>" <%= current_level == levels[level] ? 'selected' : '' %>>
+            <%= level %>
+          </option>
+        <% } %>
+      <% } %>
+    </select>
+  </div>
+  
 </div>
 <div class='messages'>
   <div class='msg'></div>

@@ -21,6 +21,7 @@ backbone.$ = $
 io = require 'socket.io-client'
 _ = require 'underscore'
 templates = require './templates'
+config = require './config.js'
 
 # Cap LogMessages collection size
 MESSAGE_CAP = 5000
@@ -532,6 +533,10 @@ class LogScreenView extends backbone.View
     @forceScroll = true
     @filter = null
 
+    # level filter
+    @levels = config.levels
+    @current_level = config.default_level
+
   events:
     "click .controls .close": "_close"
     "click .controls .clear": "_clear"
@@ -557,6 +562,11 @@ class LogScreenView extends backbone.View
     @filter = if filter then new RegExp "(#{filter})", 'ig' else null
     @_renderMessages()
 
+  _levelFilter:(e)=>
+    # trigger when select..onchange
+    @current_level = e.currentTarget.value
+    @_renderMessages()
+
   _addNewLogMessage: (lmessage) =>
     @logScreen.logMessages.add lmessage
     @_renderNewLog lmessage
@@ -570,6 +580,12 @@ class LogScreenView extends backbone.View
     msg = lmessage.render_message()
     if @filter
       msg = if _msg.match @filter then msg.replace @filter, '<span class="highlight">$1</span>' else null
+
+    # >= 当前level 可以显示
+    if @current_level
+      if @levels[lmessage.get('level')] < @current_level
+        msg = null 
+    
     if msg
       @msgs.append @logTemplate
         lmessage: lmessage
@@ -583,8 +599,14 @@ class LogScreenView extends backbone.View
   render: ->
     @$el.html @template
       logScreens: @logScreens
+      # pass levels to template()
+      levels: @levels
+      current_level : @current_level
+
     @$el.find('.messages').scroll @_recordScroll
     @$el.find('.controls .filter input').keyup @__filter
+    # 更改 level后运行 _filter函数
+    @$el.find('#level_filter').change @_levelFilter
     @msgs = @$el.find '.msg'
     @_renderMessages()
     @
