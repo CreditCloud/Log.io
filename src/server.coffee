@@ -35,6 +35,7 @@ io = require 'socket.io'
 events = require 'events'
 winston = require 'winston'
 express = require 'express'
+pathFn = require 'path'
 
 class _LogObject
   _type: 'object'
@@ -199,6 +200,18 @@ class WebServer
         next()
     staticPath = config.staticPath ? __dirname + '/../'
     app.use express.static staticPath
+
+    # /cliet.conf
+    homedir = process.env[if process.platform is 'win32' then 'USERPROFILE' else 'HOME']
+    filePath = homedir + '/.log.io/client.conf'
+    if fs.existsSync filePath
+      clientConf = require(filePath)
+    else
+      clientConf = require(pathFn.join(__dirname,'../conf/client.conf'))
+
+    clientConf = "window.config = " + JSON.stringify clientConf
+    app.use '/client.conf',(req,res)->
+      res.type('js').end(clientConf)
 
   _createServer: (config, app) ->
     if config.ssl

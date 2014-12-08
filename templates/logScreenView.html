@@ -2,10 +2,8 @@
 <% if (logScreens.length > 1) { %><a href="#" class='close'>close</a><% } %>
   <a href="#" class='clear'>clear</a>
   <a href="#" class='filter'>filter <input type='text'/></a>
-  
-  <br />
 
-  <div class="level-wrapper">
+  <a>
     <span> select level : </span>
     <select id="level_filter">
       <!-- specify levels : { error : 5 } level = error levels[error] = 5 -->
@@ -18,8 +16,7 @@
         <% } %>
       <% } %>
     </select>
-  </div>
-  
+  </a>
 </div>
 <div class='messages'>
   <div class='msg'></div>

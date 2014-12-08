@@ -1,5 +1,5 @@
 {
-  "name": "log.io",
+  "name": "cc-log.io",
   "description": "Realtime log monitoring in your browser",
   "version": "0.3.4",
   "homepage": "http://logio.org",
@@ -33,6 +33,7 @@
   },
   "scripts": {
     "prepublish": "cake build",
-    "postinstall": "cake ensure:configuration"
+    "postinstall": "cake ensure:configuration",
+    "server": "node bin/log.io-server"
   }
 }
