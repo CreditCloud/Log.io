@@ -13,6 +13,7 @@ winston = require 'winston'
 sinon_chai = require 'sinon-chai'
 chai.use sinon_chai
 should = chai.should()
+global.config = require "../../conf/client.conf"
 
 {LogHarvester} = require '../../lib/harvester.js'
 {LogServer, WebServer} = require '../../lib/server.js'

@@ -22,6 +22,9 @@ io = require 'socket.io-client'
 _ = require 'underscore'
 templates = require './templates'
 
+# Cap LogMessages collection size
+MESSAGE_CAP = 5000
+
 ###
 ColorManager acts as a circular queue for color values.
 Every new Stream or Node is assigned a color value on instantiation.
