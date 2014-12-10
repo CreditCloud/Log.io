@@ -205,9 +205,9 @@ class WebServer
     homedir = process.env[if process.platform is 'win32' then 'USERPROFILE' else 'HOME']
     filePath = homedir + '/.log.io/client.conf'
     if fs.existsSync filePath
-      clientConf = require(filePath)
+      clientConf = require filePath
     else
-      clientConf = require(pathFn.join(__dirname,'../conf/client.conf'))
+      clientConf = require '../conf/client.conf'
 
     clientConf = "window.config = " + JSON.stringify clientConf
     app.use '/client.conf',(req,res)->
