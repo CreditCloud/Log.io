@@ -1,7 +1,7 @@
 {
   "name": "cc-log.io",
   "description": "Realtime log monitoring in your browser",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "homepage": "https://github.com/CreditCloud/Log.io",
   "repository":{
     "type": "git",
@@ -22,6 +22,9 @@
     "express": "~3.0.1",
     "winston": "~0.6.2",
     "coffee-script": "~1.4.0"
+  },
+  "peerDependencies":{
+    "config":"^1.9.0"
   },
   "devDependencies": {
     "browserify": "~1.16.6",

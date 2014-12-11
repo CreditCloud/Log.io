@@ -202,14 +202,19 @@ class WebServer
     app.use express.static staticPath
 
     # /cliet.conf
-    homedir = process.env[if process.platform is 'win32' then 'USERPROFILE' else 'HOME']
-    filePath = homedir + '/.log.io/client.conf'
-    if fs.existsSync filePath
-      clientConf = require filePath
-    else
-      clientConf = require '../conf/client.conf'
-
-    clientConf = "window.config = " + JSON.stringify clientConf
+    default_levels = {
+      silly: 0,
+      debug: 1,
+      verbose: 2,
+      info: 3,
+      warn: 4,
+      error: 5
+    }
+    config = {
+      levels: require('config').levels || default_levels,
+      default_level: require('config').client_default_level || 1
+    }
+    clientConf = "window.config = " + JSON.stringify config
     app.use '/client.conf',(req,res)->
       res.type('js').end(clientConf)
 
