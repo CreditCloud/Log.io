@@ -4,29 +4,23 @@ pathFn = require 'path'
 
 ENV = '/usr/bin/env'
 BIN = "#{__dirname}/node_modules/.bin/"
-# browserify less coffee 指定版本
-BROWSERIFY = "#{ BIN }browserify"
-COFFEE = "#{ BIN }coffee"
-MOCHA = "#{ ENV } mocha"
-LESS = "#{ BIN }lessc"
+# browserify less coffee mocha 用本地指定版本
+BROWSERIFY = "#{BIN}browserify"
+LESS = "#{BIN}lessc"
+COFFEE = "#{BIN}coffee"
+MOCHA = "#{BIN}mocha"
 NODE = "#{ ENV } node"
 
 TEMPLATE_SRC = "#{ __dirname }/templates"
 TEMPLATE_OUTPUT = "#{ __dirname }/src/templates.coffee"
 
 task 'build', "Builds Log.io package", ->
-  invoke "copy"
   invoke 'templates'
   invoke 'compile'
   invoke 'less'
   invoke 'browserify'
   # Ensure browserify has completed
   setTimeout (-> invoke 'func_test'), 2000
-
-task 'copy',"copy /src/*.js to /lib/*.js",->
-  fs.readdirSync("src").forEach (f)->
-    if pathFn.extname(f) == '.js'
-      copyFile("src/#{f}","lib/#{f}")
 
 task 'compile', "Compiles CoffeeScript src/*.coffee to lib/*.js", ->
   console.log "Compiling src/*.coffee to lib/*.js"
@@ -41,7 +35,7 @@ task 'browserify', "Compiles client.coffee to browser-friendly JS", ->
 
 task 'less', "Compiles less templates to CSS", ->
   console.log "Compiling src/less/* to lib/log.io.css"
-  exec "lessc #{__dirname}/src/less/log.io.less -compress -o #{__dirname}/lib/log.io.css", (err, stdout, stderr) ->
+  exec "#{LESS} #{__dirname}/src/less/log.io.less -compress -o #{__dirname}/lib/log.io.css", (err, stdout, stderr) ->
     throw err if err
     console.log stdout + stderr if stdout + stderr
 
@@ -55,7 +49,7 @@ task 'ensure:configuration', "Ensures that config files exist in ~/.log.io/", ->
   homedir = process.env[if process.platform is 'win32' then 'USERPROFILE' else 'HOME']
   ldir = homedir + '/.log.io/'
   fs.mkdirSync ldir if not fs.existsSync ldir
-  for c in ['harvester', 'log_server', 'web_server']
+  for c in ['harvester', 'log_server', 'web_server',"client"]
     path = ldir + "#{c}.conf"
     copyFile "./conf/#{c}.conf", path if not fs.existsSync path
 

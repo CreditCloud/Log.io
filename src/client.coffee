@@ -21,7 +21,6 @@ backbone.$ = $
 io = require 'socket.io-client'
 _ = require 'underscore'
 templates = require './templates'
-config = require './config.js'
 
 # Cap LogMessages collection size
 MESSAGE_CAP = 5000

@@ -35,6 +35,7 @@ io = require 'socket.io'
 events = require 'events'
 winston = require 'winston'
 express = require 'express'
+pathFn = require 'path'
 
 class _LogObject
   _type: 'object'
@@ -199,6 +200,23 @@ class WebServer
         next()
     staticPath = config.staticPath ? __dirname + '/../'
     app.use express.static staticPath
+
+    # /cliet.conf
+    default_levels = {
+      silly: 0,
+      debug: 1,
+      verbose: 2,
+      info: 3,
+      warn: 4,
+      error: 5
+    }
+    config = {
+      levels: require('config').levels || default_levels,
+      default_level: require('config').client_default_level || 1
+    }
+    clientConf = "window.config = " + JSON.stringify config
+    app.use '/client.conf',(req,res)->
+      res.type('js').end(clientConf)
 
   _createServer: (config, app) ->
     if config.ssl
